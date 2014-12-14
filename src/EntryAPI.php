@@ -6,8 +6,6 @@
 namespace CultuurNet\Entry;
 
 use CultuurNet\Auth\Guzzle\OAuthProtectedService;
-use CultuurNet\UDB3\Keyword;
-use CultuurNet\UDB3\Language;
 use Guzzle\Http\Message\EntityEnclosingRequest;
 
 class EntryAPI extends OAuthProtectedService
