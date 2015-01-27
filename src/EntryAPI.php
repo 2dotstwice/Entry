@@ -22,6 +22,8 @@ class EntryAPI extends OAuthProtectedService
 
     const PRIVATE_KEYWORD = 'PrivateKeyword';
 
+    const ITEM_CREATED = 'ItemCreated';
+
     protected function eventTranslationPath($eventId)
     {
         return "event/{$eventId}/translations";
@@ -170,6 +172,42 @@ class EntryAPI extends OAuthProtectedService
         ];
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UnexpectedTranslationErrorException($rsp);
+        }
+    }
+
+    /**
+     * @param string $cdbxml
+     *   Event cdbxml.
+     * @return string
+     *   The cdbid of the created event.
+     */
+    public function createEvent($cdbxml)
+    {
+        $request = $this->getClient()->post(
+            'event',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $cdbxml
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardEventCreateResponseIsSuccessful(rsp);
+
+        $linkParts = explode('/', $rsp->getLink());
+        $eventId = array_pop($linkParts);
+
+        return $eventId;
+    }
+
+    private function guardEventCreateResponseIsSuccessful(Rsp $rsp)
+    {
+        if ($rsp->getCode() !== self::ITEM_CREATED) {
+            // @todo: use a more specific exception
+            throw new \RuntimeException($rsp->getCode());
         }
     }
 }
