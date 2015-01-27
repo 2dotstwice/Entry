@@ -8,6 +8,7 @@ namespace CultuurNet\Entry;
 class Rsp
 {
     const LEVEL_INFO = 'INFO';
+    const LEVEL_ERROR = 'ERROR';
 
     /**
      * @var string

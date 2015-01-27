@@ -24,6 +24,8 @@ class EntryAPI extends OAuthProtectedService
 
     const ITEM_CREATED = 'ItemCreated';
 
+    const NOT_FOUND = 'NotFound';
+
     protected function eventTranslationPath($eventId)
     {
         return "event/{$eventId}/translations";
@@ -195,7 +197,7 @@ class EntryAPI extends OAuthProtectedService
 
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
-        $this->guardEventCreateResponseIsSuccessful(rsp);
+        $this->guardEventCreateResponseIsSuccessful($rsp);
 
         $linkParts = explode('/', $rsp->getLink());
         $eventId = array_pop($linkParts);
@@ -205,9 +207,9 @@ class EntryAPI extends OAuthProtectedService
 
     private function guardEventCreateResponseIsSuccessful(Rsp $rsp)
     {
-        if ($rsp->getCode() !== self::ITEM_CREATED) {
+        if ($rsp->getLevel() == $rsp::LEVEL_ERROR) {
             // @todo: use a more specific exception
-            throw new \RuntimeException($rsp->getCode());
+            throw new CreateEventErrorException($rsp);
         }
     }
 }
