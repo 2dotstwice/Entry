@@ -212,4 +212,19 @@ class EntryAPI extends OAuthProtectedService
             throw new CreateEventErrorException($rsp);
         }
     }
+
+    /**
+     * @param string $cdbid
+     * @return string
+     */
+    public function getActor($cdbid)
+    {
+        $request = $this->getClient()->get(
+            'actor/' . $cdbid
+        );
+
+        $response = $request->send();
+
+        return $response->getBody(TRUE);
+    }
 }
