@@ -24,6 +24,12 @@ class EntryAPI extends OAuthProtectedService
 
     const ITEM_CREATED = 'ItemCreated';
 
+    /**
+     * Status code when an item has been succesfully updated.
+     * @var string
+     */
+    const ITEM_MODIFIED = 'ItemModified';
+
     const NOT_FOUND = 'NotFound';
 
     protected function eventTranslationPath($eventId)
@@ -147,7 +153,7 @@ class EntryAPI extends OAuthProtectedService
         $request = $this->getClient()->delete(
             $this->eventKeywordsPath($eventId)
         );
-        
+
         $request->getQuery()->add('keyword', (string)$keyword);
 
         $response = $request->send();
@@ -178,6 +184,42 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
+     * Get an event.
+     *
+     * @param string $id
+     *   ID of the event to load.
+     * @return CultureFeed_Cdb_Item_Event
+     */
+    public function getEvent($id) {
+
+        $request = $this->getClient()->get(
+            'event/' . $id,
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            )
+        );
+
+        $response = $request->send();
+
+        $result = $response->getBody(true);
+
+        try {
+          $xml = new \CultureFeed_SimpleXMLElement($result);
+        }
+        catch (Exception $e) {
+          throw new \CultureFeed_ParseException($result);
+        }
+
+        if ($xml->event) {
+          $eventXml = $xml->event;
+          return \CultureFeed_Cdb_Item_Event::parseFromCdbXml($eventXml);
+        }
+
+        throw new \CultureFeed_ParseException($result);
+
+    }
+
+    /**
      * @param string $cdbxml
      *   Event cdbxml.
      * @return string
@@ -185,8 +227,71 @@ class EntryAPI extends OAuthProtectedService
      */
     public function createEvent($cdbxml)
     {
+
         $request = $this->getClient()->post(
             'event',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $cdbxml
+        );
+
+        $response = $request->send();
+        \Drupal::logger('test')->log('error', $request->getUrl(), array());
+        \Drupal::logger('test')->log('error', $response->getBody(true), array());
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemCreateResponseIsSuccessful($rsp);
+
+        $linkParts = explode('/', $rsp->getLink());
+        $eventId = array_pop($linkParts);
+
+        return $eventId;
+    }
+
+    /**
+     * Update an event.
+     *
+     * @param CultureFeed_Cdb_Item_Event $event
+     *   The event to update.
+     */
+    public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
+
+        $cdb = new \CultureFeed_Cdb_Default();
+        $cdb->addItem($event);
+        $cdbXml = (string) $cdb;
+
+        $request = $this->getClient()->post(
+            'event/' . $event->getCdbId(),
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $cdbXml
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
+     * Create an actor in UDB2.
+     *
+     * @param string $cdbxml
+     *   Actor cdbxml.
+     * @return string
+     *   The cdbid of the created actor.
+     */
+    public function createActor($cdbxml)
+    {
+
+        $request = $this->getClient()->post(
+            'actor',
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
@@ -197,7 +302,7 @@ class EntryAPI extends OAuthProtectedService
 
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
-        $this->guardEventCreateResponseIsSuccessful($rsp);
+        $this->guardItemCreateResponseIsSuccessful($rsp);
 
         $linkParts = explode('/', $rsp->getLink());
         $eventId = array_pop($linkParts);
@@ -205,11 +310,52 @@ class EntryAPI extends OAuthProtectedService
         return $eventId;
     }
 
-    private function guardEventCreateResponseIsSuccessful(Rsp $rsp)
+    /**
+     * Update an actor in UDB2.
+     *
+     * @param string $cdbxml
+     *   Actor cdbxml.
+     * @return string
+     *   The cdbid of the created actor.
+     */
+    public function updateActor($cdbxml)
+    {
+
+        $request = $this->getClient()->post(
+            'actor',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $cdbxml
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        $linkParts = explode('/', $rsp->getLink());
+        $eventId = array_pop($linkParts);
+
+        return $eventId;
+    }
+
+    private function guardItemCreateResponseIsSuccessful(Rsp $rsp)
     {
         if ($rsp->getLevel() == $rsp::LEVEL_ERROR) {
             // @todo: use a more specific exception
             throw new CreateEventErrorException($rsp);
+        }
+    }
+
+    private function guardItemUpdateResponseIsSuccessful(Rsp $rsp)
+    {
+        $validCodes = [
+            self::ITEM_MODIFIED,
+        ];
+        if (!in_array($rsp->getCode(), $validCodes)) {
+            throw new UpdateEventErrorException($rsp);
         }
     }
 }
