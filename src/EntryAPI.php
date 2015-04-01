@@ -237,8 +237,6 @@ class EntryAPI extends OAuthProtectedService
         );
 
         $response = $request->send();
-        \Drupal::logger('test')->log('error', $request->getUrl(), array());
-        \Drupal::logger('test')->log('error', $response->getBody(true), array());
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
         $this->guardItemCreateResponseIsSuccessful($rsp);
