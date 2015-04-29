@@ -186,8 +186,8 @@ class EntryAPI extends OAuthProtectedService
     /**
      * Get an event.
      *
-     * @param string $id
-     *   ID of the event to load.
+     * @param string $id ID of the event to load.
+     *
      * @return CultureFeed_Cdb_Item_Event
      */
     public function getEvent($id) {
@@ -220,20 +220,20 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
-     * @param string $cdbxml
-     *   Event cdbxml.
-     * @return string
-     *   The cdbid of the created event.
+     * Create an event
+     *
+     * @param string $cdbxml Event cdbxml
+     *
+     * @return string The cdbid of the created event.
      */
-    public function createEvent($cdbxml)
+    public function createEvent(\CultureFeed_Cdb_Item_Event $event)
     {
-
         $request = $this->getClient()->post(
             'event',
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbxml
+            $this->getEventXml($event)
         );
 
         $response = $request->send();
@@ -254,7 +254,6 @@ class EntryAPI extends OAuthProtectedService
      *   The event to update.
      */
     public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
-
         $cdb = new \CultureFeed_Cdb_Default();
         $cdb->addItem($event);
         $cdbXml = (string) $cdb;
@@ -355,5 +354,21 @@ class EntryAPI extends OAuthProtectedService
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UpdateEventErrorException($rsp);
         }
+    }
+
+    /**
+     * Get event XML string
+     *
+     * @param CultureFeed_Cdb_Item_Event $event
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function getEventXml(\CultureFeed_Cdb_Item_Event $event)
+    {
+        $cdb = new \CultureFeed_Cdb_Default();
+        $cdb->addItem($event);
+
+        return (string) $cdb;
     }
 }
