@@ -280,6 +280,21 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
+     * Delete an event
+     *
+     * @param string id The event to delete.
+     */
+    public function deleteEvent($id)
+    {
+        $request = $this->getClient()->delete('event/' . $id);
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        return $rsp;
+    }
+
+    /**
      * Create an actor in UDB2.
      *
      * @param string $cdbxml
