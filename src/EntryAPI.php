@@ -165,6 +165,46 @@ class EntryAPI extends OAuthProtectedService
         return $rsp;
     }
 
+    /**
+     * Check the permission of a user to edit one or more items.
+     *
+     * @param string $userid
+     *   User id of the user.
+     * @param string $email
+     *   Email address of that user
+     * @param Array $ids
+     *   Array of ids to check.
+     * @return Rsp
+     *
+     * @throws CultureFeed_ParseException
+     */
+    public function checkPermission($userid, $email, $ids)
+    {
+
+        $request = $this->getClient()->get(
+            'event/checkpermission',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            )
+        );
+
+        $query = $request->getQuery();
+        $query->add('user', $userid);
+        $query->add('email', $email);
+        $query->add('ids', $ids);
+
+        $response = $request->send();
+
+        $result = $response->getBody(true);
+
+        try {
+          return new \CultureFeed_SimpleXMLElement($result);
+        }
+        catch (Exception $e) {
+          throw new \CultureFeed_ParseException($result);
+        }
+    }
+
     private function guardDeleteKeywordResponseIsSuccessful(Rsp $rsp)
     {
         if ($rsp->getCode() !== self::KEYWORD_WITHDRAWN) {
