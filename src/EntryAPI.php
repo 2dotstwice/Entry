@@ -24,6 +24,8 @@ class EntryAPI extends OAuthProtectedService
 
     const ITEM_CREATED = 'ItemCreated';
 
+    const ITEM_WITHDRAWN = 'ItemWithdrawn';
+
     /**
      * Status code when an item has been succesfully updated.
      * @var string
@@ -263,9 +265,33 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
+     * Delete an event.
+     *
+     * @param string $id
+     *   ID of the event to delete.
+     */
+    public function deleteEvent($id) {
+
+        $request = $this->getClient()->delete(
+            'event/' . $id,
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            )
+        );
+
+        $response = $request->send();
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemWithdrawnResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
      * Create an event
      *
-     * @param string $cdbxml Event cdbxml
+     * @param \CultureFeed_Cdb_Item_Event $event
      *
      * @return string The cdbid of the created event.
      */
@@ -317,21 +343,6 @@ class EntryAPI extends OAuthProtectedService
 
         return $rsp;
 
-    }
-
-    /**
-     * Delete an event
-     *
-     * @param string id The event to delete.
-     */
-    public function deleteEvent($id)
-    {
-        $request = $this->getClient()->delete('event/' . $id);
-        $response = $request->send();
-
-        $rsp = Rsp::fromResponseBody($response->getBody(true));
-
-        return $rsp;
     }
 
     /**
@@ -408,6 +419,16 @@ class EntryAPI extends OAuthProtectedService
     {
         $validCodes = [
             self::ITEM_MODIFIED,
+        ];
+        if (!in_array($rsp->getCode(), $validCodes)) {
+            throw new UpdateEventErrorException($rsp);
+        }
+    }
+
+    private function guardItemWithdrawnResponseIsSuccessful(Rsp $rsp)
+    {
+        $validCodes = [
+            self::ITEM_WITHDRAWN,
         ];
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UpdateEventErrorException($rsp);
