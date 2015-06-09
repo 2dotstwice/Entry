@@ -220,6 +220,40 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
+     * Get an event.
+     *
+     * @param string $id
+     *   ID of the event to delete.
+     */
+    public function deleteEvent($id) {
+
+        $request = $this->getClient()->delete(
+            'event/' . $id,
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            )
+        );
+
+        $response = $request->send();
+        $result = $response->getBody(true);
+
+        try {
+          $xml = new \CultureFeed_SimpleXMLElement($result);
+        }
+        catch (Exception $e) {
+          throw new \CultureFeed_ParseException($result);
+        }
+
+        //<code>ItemWithdrawn</code>
+        if ($xml->code) {
+          return $xml->code;
+        }
+
+        throw new \CultureFeed_ParseException($result);
+
+    }
+
+    /**
      * @param string $cdbxml
      *   Event cdbxml.
      * @return string
