@@ -42,6 +42,11 @@ class EntryAPI extends OAuthProtectedService
         return "event/{$eventId}/keywords";
     }
 
+    protected function updatePath($entityId, EntityType $entityType)
+    {
+        return $entityType . "/" . $entityId;
+    }
+
     /**
      * @return \Guzzle\Http\Client
      */
@@ -163,6 +168,275 @@ class EntryAPI extends OAuthProtectedService
         $this->guardDeleteKeywordResponseIsSuccessful($rsp);
 
         return $rsp;
+    }
+
+    /**
+     * Update the title for an event.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param \CultuurNet\Entry\Title $title
+     * @param \CultuurNet\Entry\Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateTitle($entityId, EntityType $entityType, Title $title, Language $language)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/title',
+            null,
+            [
+                'lang' => (string) $language,
+                'value' => (string) $title,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the description of an event.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param \CultuurNet\Entry\String $description
+     * @param \CultuurNet\Entry\Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateDescription($entityId, EntityType $entityType, String $description, Language $language)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/description',
+            null,
+            [
+                'lang' => (string) $language,
+                'value' => (string) $description,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Delete the description of an item.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param \CultuurNet\Entry\Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function deleteDescription($entityId, EntityType $entityType, Language $language)
+    {
+        $request = $this->getClient()->delete(
+            $this->updatePath($entityId, $entityType) . '/description',
+            null,
+            [
+                'lang' => (string) $language,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the required age for an event.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param \CultuurNet\Entry\String $description
+     * @param \CultuurNet\Entry\Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateAge($entityId, EntityType $entityType, Number $age)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/age',
+            null,
+            [
+                'value' => (int) $age,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Delete the required age for an event.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function deleteAge($entityId, EntityType $entityType, Number $age)
+    {
+        $request = $this->getClient()->delete(
+            $this->updatePath($entityId, $entityType) . '/age',
+            null,
+            []
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the organiser of an event.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param \CultuurNet\Entry\String $organiser
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateOrganiser($entityId, EntityType $entityType, String $organiser)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/organiser',
+            null,
+            [
+                'value' => (string) $organiser,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the facilities for an event.
+     *
+     * @param type $entityId
+     * @param \DOMDocument $dom
+     */
+    public function updateFacilities($entityId, \DOMDocument $dom)
+    {
+
+        $entityType = new EntityType('event');
+
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/updateFacilities',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $dom->saveXML()
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
+     * Update the contact info for an item.
+     *
+     * @param stro,g $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param \CultureFeed_Cdb_Data_ContactInfo $contactInfo
+     */
+    public function updateContactInfo($entityId, EntityType $entityType, \CultureFeed_Cdb_Data_ContactInfo $contactInfo)
+    {
+
+        $dom = new \DOMDocument('1.0', 'utf-8');
+        $domElement = $dom->createElement('info');
+        $contactInfo->appendToDOM($domElement);
+
+        $contactInfoNode = $dom->importNode($domElement->childNodes->item(0), true);
+        $dom->appendChild($contactInfoNode);
+
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/updateContactinfo',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $dom->saveXml()
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
+     * Update the bookingperiod for given item.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\BookingPeriod $bookingPeriod
+     */
+    public function updateBookingPeriod($entityId, BookingPeriod $bookingPeriod)
+    {
+
+        $entityType = new EntityType('event');
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/bookingperiod',
+            null,
+            [
+                'startdate' => $bookingPeriod->getStartDate(),
+                'enddate' => $bookingPeriod->getEndDate(),
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
     }
 
     /**
