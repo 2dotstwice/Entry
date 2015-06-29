@@ -30,6 +30,11 @@ class EntryAPI extends OAuthProtectedService
      */
     const ITEM_MODIFIED = 'ItemModified';
 
+    /**
+     * Status code when a value of an item has been removed.
+     */
+    const VALUE_WITHDRAWN  = 'ValueWithdrawn';
+
     const NOT_FOUND = 'NotFound';
 
     protected function eventTranslationPath($eventId)
@@ -256,7 +261,7 @@ class EntryAPI extends OAuthProtectedService
 
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
-        $this->guardItemUpdateResponseIsSuccessful($rsp);
+        $this->guardValueWithdrawnResponseIsSuccessful($rsp);
 
         return $rsp;
     }
@@ -278,7 +283,7 @@ class EntryAPI extends OAuthProtectedService
             $this->updatePath($entityId, $entityType) . '/age',
             null,
             [
-                'value' => (int) $age,
+                'value' => (int) $age->getNumber(),
             ]
         );
 
@@ -300,7 +305,7 @@ class EntryAPI extends OAuthProtectedService
      *
      * @throws UpdateEventErrorException
      */
-    public function deleteAge($entityId, EntityType $entityType, Number $age)
+    public function deleteAge($entityId, EntityType $entityType)
     {
         $request = $this->getClient()->delete(
             $this->updatePath($entityId, $entityType) . '/age',
@@ -312,7 +317,7 @@ class EntryAPI extends OAuthProtectedService
 
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
-        $this->guardItemUpdateResponseIsSuccessful($rsp);
+        $this->guardValueWithdrawnResponseIsSuccessful($rsp);
 
         return $rsp;
     }
@@ -342,6 +347,32 @@ class EntryAPI extends OAuthProtectedService
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
         $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Delete the organiser of an event.
+     *
+     * @param string $entityId
+     * @param \CultuurNet\Entry\EntityType $entityType
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function deleteOrganiser($entityId, EntityType $entityType)
+    {
+        $request = $this->getClient()->delete(
+            $this->updatePath($entityId, $entityType) . '/organiser',
+            null,
+            []
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardValueWithdrawnResponseIsSuccessful($rsp);
 
         return $rsp;
     }
@@ -665,6 +696,16 @@ class EntryAPI extends OAuthProtectedService
     {
         $validCodes = [
             self::ITEM_MODIFIED,
+        ];
+        if (!in_array($rsp->getCode(), $validCodes)) {
+            throw new UpdateEventErrorException($rsp);
+        }
+    }
+
+    private function guardValueWithdrawnResponseIsSuccessful(Rsp $rsp)
+    {
+        $validCodes = [
+            self::VALUE_WITHDRAWN,
         ];
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UpdateEventErrorException($rsp);
