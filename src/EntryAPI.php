@@ -5,8 +5,12 @@
 
 namespace CultuurNet\Entry;
 
+use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\Guzzle\OAuthProtectedService;
+use CultuurNet\Auth\TokenCredentials;
+use Guzzle\Http\Client;
 use Guzzle\Http\Message\EntityEnclosingRequest;
+use Guzzle\Http\Url;
 
 class EntryAPI extends OAuthProtectedService
 {
@@ -37,6 +41,24 @@ class EntryAPI extends OAuthProtectedService
 
     const NOT_FOUND = 'NotFound';
 
+    private $cdb_schema_version = '3.3';
+
+  /**
+     * @param string $baseUrl
+     * @param ConsumerCredentials $consumer
+     * @param TokenCredentials $tokenCredentials
+     * @param string $cdb_schema_version
+     */
+    public function __construct($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null, $cdb_schema_version = '3.3')
+    {
+        // @todo check type of $baseUrl
+        $this->baseUrl = Url::factory($baseUrl);
+        $this->consumerCredentials = $consumerCredentials;
+        $this->tokenCredentials = $tokenCredentials;
+        $this->cdb_schema_version = $cdb_schema_version;
+
+    }
+
     protected function eventTranslationPath($eventId)
     {
         return "event/{$eventId}/translations";
@@ -53,7 +75,7 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
-     * @return \Guzzle\Http\Client
+     * @return Client
      */
     protected function getClient()
     {
@@ -179,9 +201,9 @@ class EntryAPI extends OAuthProtectedService
      * Update the title for an event.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
-     * @param \CultuurNet\Entry\Title $title
-     * @param \CultuurNet\Entry\Language $language
+     * @param EntityType $entityType
+     * @param Title $title
+     * @param Language $language
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -210,9 +232,9 @@ class EntryAPI extends OAuthProtectedService
      * Update the description of an event.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
-     * @param \CultuurNet\Entry\String $description
-     * @param \CultuurNet\Entry\Language $language
+     * @param EntityType $entityType
+     * @param String $description
+     * @param Language $language
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -241,8 +263,8 @@ class EntryAPI extends OAuthProtectedService
      * Delete the description of an item.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
-     * @param \CultuurNet\Entry\Language $language
+     * @param EntityType $entityType
+     * @param Language $language
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -270,9 +292,9 @@ class EntryAPI extends OAuthProtectedService
      * Update the required age for an event.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
-     * @param \CultuurNet\Entry\String $description
-     * @param \CultuurNet\Entry\Language $language
+     * @param EntityType $entityType
+     * @param String $description
+     * @param Language $language
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -300,7 +322,7 @@ class EntryAPI extends OAuthProtectedService
      * Delete the required age for an event.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param EntityType $entityType
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -326,8 +348,8 @@ class EntryAPI extends OAuthProtectedService
      * Update the organiser of an event.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
-     * @param \CultuurNet\Entry\String $organiser
+     * @param EntityType $entityType
+     * @param String $organiser
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -355,7 +377,7 @@ class EntryAPI extends OAuthProtectedService
      * Delete the organiser of an event.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param EntityType $entityType
      * @return Rsp
      *
      * @throws UpdateEventErrorException
@@ -410,7 +432,7 @@ class EntryAPI extends OAuthProtectedService
      * Update the contact info for an item.
      *
      * @param stro,g $entityId
-     * @param \CultuurNet\Entry\EntityType $entityType
+     * @param EntityType $entityType
      * @param \CultureFeed_Cdb_Data_ContactInfo $contactInfo
      */
     public function updateContactInfo($entityId, EntityType $entityType, \CultureFeed_Cdb_Data_ContactInfo $contactInfo)
@@ -445,7 +467,7 @@ class EntryAPI extends OAuthProtectedService
      * Update the bookingperiod for given item.
      *
      * @param string $entityId
-     * @param \CultuurNet\Entry\BookingPeriod $bookingPeriod
+     * @param BookingPeriod $bookingPeriod
      */
     public function updateBookingPeriod($entityId, BookingPeriod $bookingPeriod)
     {
@@ -600,7 +622,7 @@ class EntryAPI extends OAuthProtectedService
      */
     public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
 
-        $cdb = new \CultureFeed_Cdb_Default();
+        $cdb = new \CultureFeed_Cdb_Default($this->cdb_schema_version);
         $cdb->addItem($event);
         $cdbXml = (string) $cdb;
 
