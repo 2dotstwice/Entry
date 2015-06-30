@@ -605,7 +605,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $this->getEventXml($event)
+            $this->getCdbXml($event)
         );
 
         $response = $request->send();
@@ -632,7 +632,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $this->getEventXml($event)
+            $this->getCdbXml($event)
         );
 
         $response = $request->send();
@@ -672,12 +672,12 @@ class EntryAPI extends OAuthProtectedService
     /**
      * Create an actor in UDB2.
      *
-     * @param string $cdbxml
-     *   Actor cdbxml.
+     * @param CultureFeed_Cdb_Item_Actor $actor
+     *   The actor to create.
      * @return string
      *   The cdbid of the created actor.
      */
-    public function createActor($cdbxml)
+    public function createActor(\CultureFeed_Cdb_Item_Actor $actor)
     {
 
         $request = $this->getClient()->post(
@@ -685,7 +685,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbxml
+            $this->getCdbXml($actor)
         );
 
         $response = $request->send();
@@ -703,12 +703,12 @@ class EntryAPI extends OAuthProtectedService
     /**
      * Update an actor in UDB2.
      *
-     * @param string $cdbxml
-     *   Actor cdbxml.
+     * @param CultureFeed_Cdb_Item_Actor $actor
+     *   The actor to update.
      * @return string
      *   The cdbid of the created actor.
      */
-    public function updateActor($cdbxml)
+    public function updateActor(\CultureFeed_Cdb_Item_Actor $actor)
     {
 
         $request = $this->getClient()->post(
@@ -716,7 +716,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbxml
+            $this->getCdbXml($actor)
         );
 
         $response = $request->send();
@@ -770,17 +770,17 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
-     * Get event XML string
+     * Get Cdb XML string
      *
-     * @param CultureFeed_Cdb_Item_Event $event
+     * @param CultureFeed_Cdb_Item_Base $item
      *
      * @return string
      * @throws \Exception
      */
-    private function getEventXml(\CultureFeed_Cdb_Item_Event $event)
+    private function getCdbXml(\CultureFeed_Cdb_Item_Base $item)
     {
         $cdb = new \CultureFeed_Cdb_Default($this->cdb_schema_version);
-        $cdb->addItem($event);
+        $cdb->addItem($item);
 
         return (string) $cdb;
     }
