@@ -24,6 +24,8 @@ class EntryAPI extends OAuthProtectedService
 
     const ITEM_CREATED = 'ItemCreated';
 
+    const ITEM_WITHDRAWN = 'ItemWithdrawn';
+
     /**
      * Status code when an item has been succesfully updated.
      * @var string
@@ -227,11 +229,14 @@ class EntryAPI extends OAuthProtectedService
      * Get an event.
      *
      * @param string $id
-     *   ID of the event to load.
-     * @return CultureFeed_Cdb_Item_Event
+     *
+     * @return \CultureFeed_Cdb_Item_Event
+     *
+     * @throws \CultureFeed_Cdb_ParseException
+     * @throws \CultureFeed_ParseException
      */
-    public function getEvent($id) {
-
+    public function getEvent($id)
+    {
         $request = $this->getClient()->get(
             'event/' . $id,
             array(
@@ -244,7 +249,7 @@ class EntryAPI extends OAuthProtectedService
         $result = $response->getBody(true);
 
         try {
-          $xml = new \CultureFeed_SimpleXMLElement($result);
+          $xml = new \SimpleXMLElement($result);
         }
         catch (Exception $e) {
           throw new \CultureFeed_ParseException($result);
@@ -260,54 +265,20 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
-     * Get an event.
+     * Create an event
      *
-     * @param string $id
-     *   ID of the event to delete.
+     * @param \CultureFeed_Cdb_Item_Event $event
+     *
+     * @return string The cdbid of the created event.
      */
-    public function deleteEvent($id) {
-
-        $request = $this->getClient()->delete(
-            'event/' . $id,
-            array(
-                'Content-Type' => 'application/xml; charset=UTF-8',
-            )
-        );
-
-        $response = $request->send();
-        $result = $response->getBody(true);
-
-        try {
-          $xml = new \CultureFeed_SimpleXMLElement($result);
-        }
-        catch (Exception $e) {
-          throw new \CultureFeed_ParseException($result);
-        }
-
-        //<code>ItemWithdrawn</code>
-        if ($xml->code) {
-          return $xml->code;
-        }
-
-        throw new \CultureFeed_ParseException($result);
-
-    }
-
-    /**
-     * @param string $cdbxml
-     *   Event cdbxml.
-     * @return string
-     *   The cdbid of the created event.
-     */
-    public function createEvent($cdbxml)
+    public function createEvent(\CultureFeed_Cdb_Item_Event $event)
     {
-
         $request = $this->getClient()->post(
             'event',
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbxml
+            $this->getEventXml($event)
         );
 
         $response = $request->send();
@@ -328,7 +299,6 @@ class EntryAPI extends OAuthProtectedService
      *   The event to update.
      */
     public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
-
         $cdb = new \CultureFeed_Cdb_Default();
         $cdb->addItem($event);
         $cdbXml = (string) $cdb;
@@ -346,6 +316,30 @@ class EntryAPI extends OAuthProtectedService
         $rsp = Rsp::fromResponseBody($response->getBody(true));
 
         $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
+     * Delete an event.
+     *
+     * @param string $id
+     *   ID of the event to delete.
+     */
+    public function deleteEvent($id) {
+
+        $request = $this->getClient()->delete(
+            'event/' . $id,
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            )
+        );
+
+        $response = $request->send();
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemWithdrawnResponseIsSuccessful($rsp);
 
         return $rsp;
 
@@ -429,5 +423,31 @@ class EntryAPI extends OAuthProtectedService
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UpdateEventErrorException($rsp);
         }
+    }
+
+    private function guardItemWithdrawnResponseIsSuccessful(Rsp $rsp)
+    {
+        $validCodes = [
+            self::ITEM_WITHDRAWN,
+        ];
+        if (!in_array($rsp->getCode(), $validCodes)) {
+            throw new UpdateEventErrorException($rsp);
+        }
+    }
+
+    /**
+     * Get event XML string
+     *
+     * @param CultureFeed_Cdb_Item_Event $event
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function getEventXml(\CultureFeed_Cdb_Item_Event $event)
+    {
+        $cdb = new \CultureFeed_Cdb_Default();
+        $cdb->addItem($event);
+
+        return (string) $cdb;
     }
 }
