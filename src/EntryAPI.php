@@ -627,17 +627,12 @@ class EntryAPI extends OAuthProtectedService
      */
     public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
 
-
-        $cdb = new \CultureFeed_Cdb_Default($this->cdb_schema_version);
-        $cdb->addItem($event);
-        $cdbXml = (string) $cdb;
-
         $request = $this->getClient()->post(
             'event/' . $event->getCdbId(),
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbXml
+            $this->getEventXml($event)
         );
 
         $response = $request->send();
@@ -784,10 +779,10 @@ class EntryAPI extends OAuthProtectedService
      */
     private function getEventXml(\CultureFeed_Cdb_Item_Event $event)
     {
-        $cdb = new \CultureFeed_Cdb_Default();
+        $cdb = new \CultureFeed_Cdb_Default($this->cdb_schema_version);
         $cdb->addItem($event);
 
         return (string) $cdb;
     }
->>>>>>> master
+
 }
