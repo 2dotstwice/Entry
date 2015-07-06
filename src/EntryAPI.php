@@ -5,8 +5,12 @@
 
 namespace CultuurNet\Entry;
 
+use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\Guzzle\OAuthProtectedService;
+use CultuurNet\Auth\TokenCredentials;
+use Guzzle\Http\Client;
 use Guzzle\Http\Message\EntityEnclosingRequest;
+use Guzzle\Http\Url;
 
 class EntryAPI extends OAuthProtectedService
 {
@@ -32,7 +36,30 @@ class EntryAPI extends OAuthProtectedService
      */
     const ITEM_MODIFIED = 'ItemModified';
 
+    /**
+     * Status code when a value of an item has been removed.
+     */
+    const VALUE_WITHDRAWN  = 'ValueWithdrawn';
+
     const NOT_FOUND = 'NotFound';
+
+    private $cdb_schema_version = '3.3';
+
+  /**
+     * @param string $baseUrl
+     * @param ConsumerCredentials $consumer
+     * @param TokenCredentials $tokenCredentials
+     * @param string $cdb_schema_version
+     */
+    public function __construct($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null, $cdb_schema_version = '3.3')
+    {
+        // @todo check type of $baseUrl
+        $this->baseUrl = Url::factory($baseUrl);
+        $this->consumerCredentials = $consumerCredentials;
+        $this->tokenCredentials = $tokenCredentials;
+        $this->cdb_schema_version = $cdb_schema_version;
+
+    }
 
     protected function eventTranslationPath($eventId)
     {
@@ -44,8 +71,13 @@ class EntryAPI extends OAuthProtectedService
         return "event/{$eventId}/keywords";
     }
 
+    protected function updatePath($entityId, EntityType $entityType)
+    {
+        return $entityType . "/" . $entityId;
+    }
+
     /**
-     * @return \Guzzle\Http\Client
+     * @return Client
      */
     protected function getClient()
     {
@@ -168,6 +200,301 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
+     * Update the title for an event.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @param Title $title
+     * @param Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateTitle($entityId, EntityType $entityType, Title $title, Language $language)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/title',
+            null,
+            [
+                'lang' => (string) $language,
+                'value' => (string) $title,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the description of an event.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @param String $description
+     * @param Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateDescription($entityId, EntityType $entityType, String $description, Language $language)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/description',
+            null,
+            [
+                'lang' => (string) $language,
+                'value' => (string) $description,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Delete the description of an item.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @param Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function deleteDescription($entityId, EntityType $entityType, Language $language)
+    {
+        $request = $this->getClient()->delete(
+            $this->updatePath($entityId, $entityType) . '/description',
+            null,
+            [
+                'lang' => (string) $language,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardValueWithdrawnResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the required age for an event.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @param String $description
+     * @param Language $language
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateAge($entityId, EntityType $entityType, Number $age)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/age',
+            null,
+            [
+                'value' => (int) $age->getNumber(),
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Delete the required age for an event.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function deleteAge($entityId, EntityType $entityType)
+    {
+        $request = $this->getClient()->delete(
+            $this->updatePath($entityId, $entityType) . '/age',
+            null,
+            []
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardValueWithdrawnResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the organiser of an event.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @param String $organiser
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function updateOrganiser($entityId, EntityType $entityType, String $organiser)
+    {
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/organiser',
+            null,
+            [
+                'value' => (string) $organiser,
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Delete the organiser of an event.
+     *
+     * @param string $entityId
+     * @param EntityType $entityType
+     * @return Rsp
+     *
+     * @throws UpdateEventErrorException
+     */
+    public function deleteOrganiser($entityId, EntityType $entityType)
+    {
+        $request = $this->getClient()->delete(
+            $this->updatePath($entityId, $entityType) . '/organiser',
+            null,
+            []
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardValueWithdrawnResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * Update the facilities for an event.
+     *
+     * @param type $entityId
+     * @param \DOMDocument $dom
+     */
+    public function updateFacilities($entityId, \DOMDocument $dom)
+    {
+
+        $entityType = new EntityType('event');
+
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/updateFacilities',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $dom->saveXML()
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
+     * Update the contact info for an item.
+     *
+     * @param stro,g $entityId
+     * @param EntityType $entityType
+     * @param \CultureFeed_Cdb_Data_ContactInfo $contactInfo
+     */
+    public function updateContactInfo($entityId, EntityType $entityType, \CultureFeed_Cdb_Data_ContactInfo $contactInfo)
+    {
+
+        $dom = new \DOMDocument('1.0', 'utf-8');
+        $domElement = $dom->createElement('info');
+        $contactInfo->appendToDOM($domElement);
+
+        $contactInfoNode = $dom->importNode($domElement->childNodes->item(0), true);
+        $dom->appendChild($contactInfoNode);
+
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/updateContactinfo',
+            array(
+                'Content-Type' => 'application/xml; charset=UTF-8',
+            ),
+            $dom->saveXml()
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
+     * Update the bookingperiod for given item.
+     *
+     * @param string $entityId
+     * @param BookingPeriod $bookingPeriod
+     */
+    public function updateBookingPeriod($entityId, BookingPeriod $bookingPeriod)
+    {
+
+        $entityType = new EntityType('event');
+        $request = $this->getClient()->post(
+            $this->updatePath($entityId, $entityType) . '/bookingperiod',
+            null,
+            [
+                'startdate' => $bookingPeriod->getStartDate(),
+                'enddate' => $bookingPeriod->getEndDate(),
+            ]
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+
+    }
+
+    /**
      * Check the permission of a user to edit one or more items.
      *
      * @param string $userid
@@ -278,7 +605,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $this->getEventXml($event)
+            $this->getCdbXml($event)
         );
 
         $response = $request->send();
@@ -299,16 +626,13 @@ class EntryAPI extends OAuthProtectedService
      *   The event to update.
      */
     public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
-        $cdb = new \CultureFeed_Cdb_Default();
-        $cdb->addItem($event);
-        $cdbXml = (string) $cdb;
 
         $request = $this->getClient()->post(
             'event/' . $event->getCdbId(),
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbXml
+            $this->getCdbXml($event)
         );
 
         $response = $request->send();
@@ -348,12 +672,12 @@ class EntryAPI extends OAuthProtectedService
     /**
      * Create an actor in UDB2.
      *
-     * @param string $cdbxml
-     *   Actor cdbxml.
+     * @param CultureFeed_Cdb_Item_Actor $actor
+     *   The actor to create.
      * @return string
      *   The cdbid of the created actor.
      */
-    public function createActor($cdbxml)
+    public function createActor(\CultureFeed_Cdb_Item_Actor $actor)
     {
 
         $request = $this->getClient()->post(
@@ -361,7 +685,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbxml
+            $this->getCdbXml($actor)
         );
 
         $response = $request->send();
@@ -379,12 +703,12 @@ class EntryAPI extends OAuthProtectedService
     /**
      * Update an actor in UDB2.
      *
-     * @param string $cdbxml
-     *   Actor cdbxml.
+     * @param CultureFeed_Cdb_Item_Actor $actor
+     *   The actor to update.
      * @return string
      *   The cdbid of the created actor.
      */
-    public function updateActor($cdbxml)
+    public function updateActor(\CultureFeed_Cdb_Item_Actor $actor)
     {
 
         $request = $this->getClient()->post(
@@ -392,7 +716,7 @@ class EntryAPI extends OAuthProtectedService
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $cdbxml
+            $this->getCdbXml($actor)
         );
 
         $response = $request->send();
@@ -435,19 +759,30 @@ class EntryAPI extends OAuthProtectedService
         }
     }
 
+    private function guardValueWithdrawnResponseIsSuccessful(Rsp $rsp)
+    {
+        $validCodes = [
+            self::VALUE_WITHDRAWN,
+        ];
+        if (!in_array($rsp->getCode(), $validCodes)) {
+            throw new UpdateEventErrorException($rsp);
+        }
+    }
+
     /**
-     * Get event XML string
+     * Get Cdb XML string
      *
-     * @param CultureFeed_Cdb_Item_Event $event
+     * @param CultureFeed_Cdb_Item_Base $item
      *
      * @return string
      * @throws \Exception
      */
-    private function getEventXml(\CultureFeed_Cdb_Item_Event $event)
+    private function getCdbXml(\CultureFeed_Cdb_Item_Base $item)
     {
-        $cdb = new \CultureFeed_Cdb_Default();
-        $cdb->addItem($event);
+        $cdb = new \CultureFeed_Cdb_Default($this->cdb_schema_version);
+        $cdb->addItem($item);
 
         return (string) $cdb;
     }
+
 }
