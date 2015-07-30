@@ -42,7 +42,7 @@ class Rsp
      * @param string $link
      * @param string $message
      */
-    private function __construct($version, $level, $code, $link, $message)
+    public function __construct($version, $level, $code, $link, $message)
     {
         $this->code = $code;
         $this->link = $link;
@@ -62,9 +62,9 @@ class Rsp
         return new static(
             (string)$simpleXml['version'],
             (string)$simpleXml['level'],
-            (string)$simpleXml->code,
-            (string)$simpleXml->link,
-            (string)$simpleXml->message
+            trim((string)$simpleXml->code),
+            trim((string)$simpleXml->link),
+            trim((string)$simpleXml->message)
         );
     }
 
