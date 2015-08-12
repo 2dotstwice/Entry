@@ -53,12 +53,13 @@ class EntryAPI extends OAuthProtectedService
      */
     public function __construct($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null, $cdb_schema_version = '3.3')
     {
-        // @todo check type of $baseUrl
-        $this->baseUrl = Url::factory($baseUrl);
-        $this->consumerCredentials = $consumerCredentials;
-        $this->tokenCredentials = $tokenCredentials;
-        $this->cdb_schema_version = $cdb_schema_version;
+        parent::__construct(
+            $baseUrl,
+            $consumerCredentials,
+            $tokenCredentials
+        );
 
+        $this->cdb_schema_version = $cdb_schema_version;
     }
 
     protected function eventTranslationPath($eventId)
@@ -79,9 +80,9 @@ class EntryAPI extends OAuthProtectedService
     /**
      * @return Client
      */
-    protected function getClient()
+    protected function getClient(array $additionalOAuthParameters = array())
     {
-        $client = parent::getClient();
+        $client = parent::getClient($additionalOAuthParameters);
 
         $client->setDefaultOption(
             'headers',
