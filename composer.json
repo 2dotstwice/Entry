@@ -10,7 +10,7 @@
   ],
   "require": {
     "php": ">=5.4.0",
-    "cultuurnet/auth": "~1.1",
+    "cultuurnet/auth": "~1.2",
     "cultuurnet/cdb": "~2"
   },
   "require-dev": {
