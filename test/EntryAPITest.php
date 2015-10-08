@@ -77,7 +77,7 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            'application/x-www-form-urlencoded; charset=utf-8',
+            'application/x-www-form-urlencoded',
             (string)$request->getHeader('Content-Type')
         );
 
