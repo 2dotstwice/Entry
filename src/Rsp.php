@@ -131,21 +131,25 @@ class Rsp
         $rootElement = $dom->createElement('rsp');
         $rootElement->setAttribute('level', $this->getLevel());
         $rootElement->setAttribute('version', $this->getVersion());
+        $dom->appendChild($rootElement);
 
         $codeNode = $dom->createTextNode($this->getCode());
         $codeElement = $dom->createElement('code');
         $codeElement->appendChild($codeNode);
+        $rootElement->appendChild($codeElement);
 
         if ($this->getLink()) {
             $linkNode = $dom->createTextNode($this->getLink());
             $linkElement = $dom->createElement('link');
             $linkElement->appendChild($linkNode);
+            $rootElement->appendChild($linkElement);
         }
 
         if ($this->getMessage()) {
             $messageNode = $dom->createTextNode($this->getMessage());
             $messageElement = $dom->createElement('message');
             $messageElement->appendChild($messageNode);
+            $rootElement->appendChild($messageElement);
         }
 
         return $dom->saveXML();
