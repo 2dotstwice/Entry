@@ -5,7 +5,6 @@
 
 namespace CultuurNet\Entry;
 
-
 abstract class RspException extends \Exception
 {
     /**
@@ -19,7 +18,8 @@ abstract class RspException extends \Exception
         parent::__construct($message);
     }
 
-    public function getRsp() {
+    public function getRsp()
+    {
         return $this->rsp;
     }
 }

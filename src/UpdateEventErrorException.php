@@ -10,8 +10,8 @@ namespace CultuurNet\Entry;
 /**
  * Error exception when udb2 update failed.
  */
-class UpdateEventErrorException extends RspException {
-
+class UpdateEventErrorException extends RspException
+{
     public function __construct(Rsp $rsp)
     {
         $message = 'UDB2 event updated failed, error code: ' . $rsp->getCode();
@@ -20,5 +20,4 @@ class UpdateEventErrorException extends RspException {
             $message
         );
     }
-
 }

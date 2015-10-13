@@ -5,7 +5,6 @@
 
 namespace CultuurNet\Entry;
 
-
 class LanguageTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -46,4 +45,4 @@ class LanguageTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException('\\InvalidArgumentException', 'Invalid language code: ' . $invalid_code);
         new Language($invalid_code);
     }
-} 
+}

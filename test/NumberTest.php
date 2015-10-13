@@ -6,15 +6,14 @@
 
 namespace CultuurNet\Entry;
 
-
 class NumberTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @test
      * @expectedException InvalidArgumentException
      */
-    public function it_refuses_a_string() {
+    public function it_refuses_a_string()
+    {
         new Number('number');
     }
 
