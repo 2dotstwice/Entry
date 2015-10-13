@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/cultuurnet/Entry.svg?branch=master)](https://travis-ci.org/cultuurnet/Entry) [![Coverage Status](https://coveralls.io/repos/cultuurnet/Entry/badge.svg?branch=master&service=github)](https://coveralls.io/github/cultuurnet/Entry?branch=master)
