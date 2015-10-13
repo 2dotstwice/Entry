@@ -6,7 +6,6 @@
 
 namespace CultuurNet\Entry;
 
-
 class EntityTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -23,7 +22,8 @@ class EntityTypeTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException InvalidArgumentException
      */
-    public function it_refuses_an_invalid_type() {
+    public function it_refuses_an_invalid_type()
+    {
         new EntityType('eevent');
     }
 }

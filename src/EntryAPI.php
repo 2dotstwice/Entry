@@ -528,10 +528,9 @@ class EntryAPI extends OAuthProtectedService
         $result = $response->getBody(true);
 
         try {
-          return new \CultureFeed_SimpleXMLElement($result);
-        }
-        catch (Exception $e) {
-          throw new \CultureFeed_ParseException($result);
+            return new \CultureFeed_SimpleXMLElement($result);
+        } catch (Exception $e) {
+            throw new \CultureFeed_ParseException($result);
         }
     }
 
@@ -577,15 +576,14 @@ class EntryAPI extends OAuthProtectedService
         $result = $response->getBody(true);
 
         try {
-          $xml = new \SimpleXMLElement($result);
-        }
-        catch (Exception $e) {
-          throw new \CultureFeed_ParseException($result);
+            $xml = new \SimpleXMLElement($result);
+        } catch (Exception $e) {
+            throw new \CultureFeed_ParseException($result);
         }
 
         if ($xml->event) {
-          $eventXml = $xml->event;
-          return \CultureFeed_Cdb_Item_Event::parseFromCdbXml($eventXml);
+            $eventXml = $xml->event;
+            return \CultureFeed_Cdb_Item_Event::parseFromCdbXml($eventXml);
         }
 
         throw new \CultureFeed_ParseException($result);
@@ -626,8 +624,8 @@ class EntryAPI extends OAuthProtectedService
      * @param CultureFeed_Cdb_Item_Event $event
      *   The event to update.
      */
-    public function updateEvent(\CultureFeed_Cdb_Item_Event $event) {
-
+    public function updateEvent(\CultureFeed_Cdb_Item_Event $event)
+    {
         $request = $this->getClient()->post(
             'event/' . $event->getCdbId(),
             array(
@@ -652,8 +650,8 @@ class EntryAPI extends OAuthProtectedService
      * @param string $id
      *   ID of the event to delete.
      */
-    public function deleteEvent($id) {
-
+    public function deleteEvent($id)
+    {
         $request = $this->getClient()->delete(
             'event/' . $id,
             array(
@@ -785,5 +783,4 @@ class EntryAPI extends OAuthProtectedService
 
         return (string) $cdb;
     }
-
 }

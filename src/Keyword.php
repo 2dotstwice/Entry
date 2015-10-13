@@ -9,7 +9,6 @@ class Keyword extends String implements \JsonSerializable
 {
     public function __construct($value)
     {
-
         parent::__construct($value);
 
         if (false !== strpos($value, ';')) {
@@ -17,5 +16,4 @@ class Keyword extends String implements \JsonSerializable
         }
         $this->value = $value;
     }
-
 }

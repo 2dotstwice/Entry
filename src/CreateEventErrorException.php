@@ -5,7 +5,6 @@
 
 namespace CultuurNet\Entry;
 
-
 class CreateEventErrorException extends RspException
 {
     public function __construct(Rsp $rsp)

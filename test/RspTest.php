@@ -94,4 +94,4 @@ class RspTest extends \PHPUnit_Framework_TestCase
             $rsp->toXml()
         );
     }
-} 
+}
