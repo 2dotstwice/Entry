@@ -29,4 +29,24 @@ class RspTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://rest.uitdatabank.be/api/v2/event/ebc9eb48-da7a-4e94-8960-be2fb2a696f3', $rsp->getLink());
         $this->assertEquals('2.0', $rsp->getVersion());
     }
+
+    /**
+     * @test
+     */
+    public function it_can_be_created_with_a_factory_for_errors()
+    {
+        $rsp = Rsp::error('INVALID_DATE', 'Invalid date detected');
+        $expectedRsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_ERROR,
+            'INVALID_DATE',
+            null,
+            'Invalid date detected'
+        );
+
+        $this->assertEquals(
+            $expectedRsp,
+            $rsp
+        );
+    }
 } 
