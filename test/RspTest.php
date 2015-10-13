@@ -75,4 +75,23 @@ class RspTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($rsp->isError());
     }
+
+    /**
+     * @test
+     */
+    public function it_can_be_serialized_to_xml()
+    {
+        $rsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_INFO,
+            'ItemCreated',
+            'http://example.com/foo',
+            'Item foo was created'
+        );
+
+        $this->assertXmlStringEqualsXmlFile(
+            __DIR__ . '/samples/ItemCreated.xml',
+            $rsp->toXml()
+        );
+    }
 } 
