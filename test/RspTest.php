@@ -49,4 +49,30 @@ class RspTest extends \PHPUnit_Framework_TestCase
             $rsp
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_can_tell_if_it_is_an_error()
+    {
+        $rsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_ERROR,
+            'INVALID_DATE',
+            null,
+            'Invalid date detected'
+        );
+
+        $this->assertTrue($rsp->isError());
+
+        $rsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_INFO,
+            'ItemCreated',
+            null,
+            'Item was created'
+        );
+
+        $this->assertFalse($rsp->isError());
+    }
 } 
