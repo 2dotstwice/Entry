@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rsp level="INFO" version="0.1">
-    <code>ItemCreated</code>
-    <link>http://example.com/foo</link>
-    <message>Item foo was created</message>
+  <code>ItemCreated</code>
+  <link>http://example.com/foo</link>
+  <message>Item foo was created</message>
 </rsp>
