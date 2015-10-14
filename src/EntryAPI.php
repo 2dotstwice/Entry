@@ -612,7 +612,7 @@ class EntryAPI extends OAuthProtectedService
         $request = $this->getClient()->post(
             'event',
             array(
-                'Content-Type' => 'application/xml; charset=UTF-8',
+                'Content-Type' => 'application/xml',
             ),
             $xml
         );
