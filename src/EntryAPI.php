@@ -599,12 +599,22 @@ class EntryAPI extends OAuthProtectedService
      */
     public function createEvent(\CultureFeed_Cdb_Item_Event $event)
     {
+        return $this->createEventFromRawXml($this->getCdbXml($event));
+    }
+
+    /**
+     * @param string $xml
+     *
+     * @return string The cdbid of the created event.
+     */
+    public function createEventFromRawXml($xml)
+    {
         $request = $this->getClient()->post(
             'event',
             array(
                 'Content-Type' => 'application/xml; charset=UTF-8',
             ),
-            $this->getCdbXml($event)
+            $xml
         );
 
         $response = $request->send();
