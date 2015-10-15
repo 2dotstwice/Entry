@@ -215,7 +215,7 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $xml,
-            $request->getBody()
+            (string)$request->getBody()
         );
 
         $expectedEventId = "004aea08-e13d-48c9-b9eb-a18f20e6d44e";
