@@ -26,7 +26,10 @@ class RspTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(Rsp::LEVEL_INFO, $rsp->getLevel());
-        $this->assertEquals('http://rest.uitdatabank.be/api/v2/event/ebc9eb48-da7a-4e94-8960-be2fb2a696f3', $rsp->getLink());
+        $this->assertEquals(
+            'http://rest.uitdatabank.be/api/v2/event/ebc9eb48-da7a-4e94-8960-be2fb2a696f3',
+            $rsp->getLink()
+        );
         $this->assertEquals('2.0', $rsp->getVersion());
     }
 

@@ -51,8 +51,12 @@ class EntryAPI extends OAuthProtectedService
      * @param TokenCredentials $tokenCredentials
      * @param string $cdb_schema_version
      */
-    public function __construct($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null, $cdb_schema_version = '3.3')
-    {
+    public function __construct(
+        $baseUrl,
+        ConsumerCredentials $consumerCredentials,
+        TokenCredentials $tokenCredentials = null,
+        $cdb_schema_version = '3.3'
+    ) {
         parent::__construct(
             $baseUrl,
             $consumerCredentials,
