@@ -251,9 +251,27 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         $event->setCalendar($calendar);
 
         $categories = new CultureFeed_Cdb_Data_CategoryList();
-        $categories->add(new CultureFeed_Cdb_Data_Category(CultureFeed_Cdb_Data_Category::CATEGORY_TYPE_EVENT_TYPE, '0.50.4.0.0', 'Concert'));
-        $categories->add(new CultureFeed_Cdb_Data_Category(CultureFeed_Cdb_Data_Category::CATEGORY_TYPE_THEME, '1.8.2.0.0', 'Jazz en blues'));
-        $categories->add(new CultureFeed_Cdb_Data_Category(CultureFeed_Cdb_Data_Category::CATEGORY_TYPE_PUBLICSCOPE, '6.2.0.0.0', 'Regionaal'));
+        $categories->add(
+            new CultureFeed_Cdb_Data_Category(
+                CultureFeed_Cdb_Data_Category::CATEGORY_TYPE_EVENT_TYPE,
+                '0.50.4.0.0',
+                'Concert'
+            )
+        );
+        $categories->add(
+            new CultureFeed_Cdb_Data_Category(
+                CultureFeed_Cdb_Data_Category::CATEGORY_TYPE_THEME,
+                '1.8.2.0.0',
+                'Jazz en blues'
+            )
+        );
+        $categories->add(
+            new CultureFeed_Cdb_Data_Category(
+                CultureFeed_Cdb_Data_Category::CATEGORY_TYPE_PUBLICSCOPE,
+                '6.2.0.0.0',
+                'Regionaal'
+            )
+        );
         $event->setCategories($categories);
 
         $contactInfo = new CultureFeed_Cdb_Data_ContactInfo();
