@@ -235,16 +235,16 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         $event->setCreatedBy('mverdoodt');
         $event->setCreationDate('2010-07-05T18:28:18');
         $event->setExternalId('SKB Import:SKB00001_216413');
-        $event->setIsParent(FALSE);
+        $event->setIsParent(false);
         $event->setLastUpdated('2010-07-28T13:58:55');
         $event->setLastUpdatedBy('mverdoodt');
         $event->setOwner('SKB Import');
         $event->setPctComplete(80);
-        $event->setPublished(TRUE);
+        $event->setPublished(true);
         $event->setValidator('SKB');
         $event->setWfStatus('approved');
         $event->setAgeFrom(18);
-        $event->setPrivate(FALSE);
+        $event->setPrivate(false);
 
         $calendar = new CultureFeed_Cdb_Data_Calendar_TimestampList();
         $calendar->add(new CultureFeed_Cdb_Data_Calendar_Timestamp('2010-08-01', '21:00:00.0000000'));
@@ -257,7 +257,7 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         $event->setCategories($categories);
 
         $contactInfo = new CultureFeed_Cdb_Data_ContactInfo();
-        $contactInfo->addMail(new CultureFeed_Cdb_Data_Mail('info@bonnefooi.be', NULL, NULL));
+        $contactInfo->addMail(new CultureFeed_Cdb_Data_Mail('info@bonnefooi.be', null, null));
         $contactInfo->addPhone(new CultureFeed_Cdb_Data_Phone('0487-62.22.31'));
         $url = new CultureFeed_Cdb_Data_Url('http://www.bonnefooi.be');
         $url->setMain();
