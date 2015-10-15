@@ -85,8 +85,8 @@ class RspTest extends \PHPUnit_Framework_TestCase
             '0.1',
             Rsp::LEVEL_INFO,
             'ItemCreated',
-            'http://example.com/foo',
-            'Item foo was created'
+            'http://www.uitdatabank.be/api/v3/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
+            null
         );
 
         $this->assertXmlStringEqualsXmlFile(
