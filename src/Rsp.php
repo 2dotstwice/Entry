@@ -69,6 +69,25 @@ class Rsp
     }
 
     /**
+     * @param string $code
+     * @param string $message
+     * @param string $version
+     * @return Rsp
+     */
+    public static function error($code, $message, $version = '0.1')
+    {
+        return new self($version, self::LEVEL_ERROR, $code, null, $message);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isError()
+    {
+        return $this->level == self::LEVEL_ERROR;
+    }
+
+    /**
      * @return string
      */
     public function getCode()
@@ -103,5 +122,36 @@ class Rsp
     public function getMessage()
     {
         return $this->message;
+    }
+
+    public function toXml()
+    {
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        $rootElement = $dom->createElement('rsp');
+        $rootElement->setAttribute('level', $this->getLevel());
+        $rootElement->setAttribute('version', $this->getVersion());
+        $dom->appendChild($rootElement);
+
+        $codeNode = $dom->createTextNode($this->getCode());
+        $codeElement = $dom->createElement('code');
+        $codeElement->appendChild($codeNode);
+        $rootElement->appendChild($codeElement);
+
+        if ($this->getLink()) {
+            $linkNode = $dom->createTextNode($this->getLink());
+            $linkElement = $dom->createElement('link');
+            $linkElement->appendChild($linkNode);
+            $rootElement->appendChild($linkElement);
+        }
+
+        if ($this->getMessage()) {
+            $messageNode = $dom->createTextNode($this->getMessage());
+            $messageElement = $dom->createElement('message');
+            $messageElement->appendChild($messageNode);
+            $rootElement->appendChild($messageElement);
+        }
+
+        return $dom->saveXML();
     }
 }

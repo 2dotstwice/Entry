@@ -51,8 +51,12 @@ class EntryAPI extends OAuthProtectedService
      * @param TokenCredentials $tokenCredentials
      * @param string $cdb_schema_version
      */
-    public function __construct($baseUrl, ConsumerCredentials $consumerCredentials, TokenCredentials $tokenCredentials = null, $cdb_schema_version = '3.3')
-    {
+    public function __construct(
+        $baseUrl,
+        ConsumerCredentials $consumerCredentials,
+        TokenCredentials $tokenCredentials = null,
+        $cdb_schema_version = '3.3'
+    ) {
         parent::__construct(
             $baseUrl,
             $consumerCredentials,
@@ -599,12 +603,22 @@ class EntryAPI extends OAuthProtectedService
      */
     public function createEvent(\CultureFeed_Cdb_Item_Event $event)
     {
+        return $this->createEventFromRawXml($this->getCdbXml($event));
+    }
+
+    /**
+     * @param string $xml
+     *
+     * @return string The cdbid of the created event.
+     */
+    public function createEventFromRawXml($xml)
+    {
         $request = $this->getClient()->post(
             'event',
             array(
-                'Content-Type' => 'application/xml; charset=UTF-8',
+                'Content-Type' => 'application/xml',
             ),
-            $this->getCdbXml($event)
+            $xml
         );
 
         $response = $request->send();
