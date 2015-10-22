@@ -668,7 +668,7 @@ class EntryAPI extends OAuthProtectedService
      */
     public function updateEventFromRawXml($eventId, $xml)
     {
-        $request = $this->getClient()->post(
+        $request = $this->getClient()->put(
             'event/' . $eventId,
             array(
                 'Content-Type' => 'application/xml',

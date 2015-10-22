@@ -247,7 +247,7 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         $request = reset($requests);
 
         $this->assertEquals(
-            'POST',
+            'PUT',
             $request->getMethod()
         );
 
