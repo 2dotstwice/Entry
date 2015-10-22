@@ -659,6 +659,33 @@ class EntryAPI extends OAuthProtectedService
     }
 
     /**
+     * Updating an event from raw xml.
+     *
+     * @param string $eventId
+     * @param string $xml
+     * @return static
+     * @throws UpdateEventErrorException
+     */
+    public function updateEventFromRawXml($eventId, $xml)
+    {
+        $request = $this->getClient()->post(
+            'event/' . $eventId,
+            array(
+                'Content-Type' => 'application/xml',
+            ),
+            $xml
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemUpdateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
      * Delete an event.
      *
      * @param string $id
