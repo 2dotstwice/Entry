@@ -226,6 +226,60 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function it_can_update_an_event_from_raw_xml()
+    {
+        $response = (new Response(200))->setBody(
+            file_get_contents(__DIR__ . '/samples/ItemModifiedEntryAPI.xml')
+        );
+        $this->mockPlugin->addResponse($response);
+
+        $xml = file_get_contents(__DIR__ . '/samples/valid_event.xml');
+
+        $eventId = '004aea08-e13d-48c9-b9eb-a18f20e6d44e';
+        $rsp = $this->entryAPI->updateEventFromRawXml($eventId, $xml);
+
+        $requests = $this->mockPlugin->getReceivedRequests();
+
+        /** @var RequestInterface|MessageInterface|EntityEnclosingRequestInterface $request */
+        $request = reset($requests);
+
+        $this->assertEquals(
+            'PUT',
+            $request->getMethod()
+        );
+
+        $this->assertEquals(
+            'http://example.com/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
+            $request->getUrl()
+        );
+
+        $this->assertEquals(
+            'application/xml',
+            (string)$request->getHeader('Content-Type')
+        );
+
+        $this->assertEquals(
+            $xml,
+            (string)$request->getBody()
+        );
+
+        $expectedRsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_INFO,
+            'ItemModified',
+            'http://test.rest.uitdatabank.be/api/v3/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
+            ''
+        );
+
+        $this->assertEquals(
+            $expectedRsp,
+            $rsp
+        );
+    }
+
     public function createCulturefeedItemEvent($cdbid)
     {
         $event = new CultureFeed_Cdb_Item_Event();
