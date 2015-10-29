@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jonas
- * Date: 26.10.15
- * Time: 11:28
- */
 
 namespace CultuurNet\Entry;
 
@@ -16,7 +10,7 @@ class EventPermissionCollection
     private $eventPermissions;
 
     /**
-     * @return array
+     * @return EventPermission[]
      */
     public function getEventPermissions()
     {
@@ -44,12 +38,14 @@ class EventPermissionCollection
         foreach ($this->getEventPermissions() as $eventPermission) {
             $eventElement =$dom->createElement('event');
 
-            $cdbidNode=$dom->createTextNode($eventPermission->getCdbid());
+            $cdbidNode = $dom->createTextNode($eventPermission->getCdbid());
             $cdbidElement = $dom->createElement('cdbid');
             $cdbidElement->appendChild($cdbidNode);
             $eventElement->appendChild($cdbidElement);
 
-            $isEditableNode = $dom->createTextNode($eventPermission->isEditable());
+            $isEditableNode = $dom->createTextNode(
+                $eventPermission->isEditable() ? 'true' : 'false'
+            );
             $isEditableElement = $dom->createElement('editable');
             $isEditableElement->appendChild($isEditableNode);
             $eventElement->appendChild($isEditableElement);
