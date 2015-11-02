@@ -7,13 +7,28 @@ namespace CultuurNet\Entry;
 
 class Keyword extends String implements \JsonSerializable
 {
-    public function __construct($value)
-    {
-        parent::__construct($value);
+    /**
+     * @var bool
+     */
+    protected $visible;
 
+    /**
+     * @return boolean
+     */
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+
+
+    public function __construct($value, $visible = true)
+    {
         if (false !== strpos($value, ';')) {
             throw new \InvalidArgumentException('Keyword should not contain semicolons');
         }
-        $this->value = $value;
+
+        parent::__construct($value);
+        $this->visible = $visible;
+
     }
 }
