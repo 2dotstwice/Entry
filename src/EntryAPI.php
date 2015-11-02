@@ -152,13 +152,29 @@ class EntryAPI extends OAuthProtectedService
         return $rsp;
     }
 
-    public function addKeyword($eventId, Keyword $keyword)
+    /**
+     * @param string $eventId
+     * @param Keyword[] $keywords
+     *
+     * @return Rsp
+     */
+    public function addKeywords($eventId, $keywords)
     {
+        $data = array();
+        $keywordsCollection = array();
+        $visiblesCollection = array();
+
+        foreach ($keywords as $keyword) {
+            $keywordsCollection[] = $keyword->__toString();
+            $visiblesCollection[] = $keyword->isVisible() ? 'true' : 'false';
+        }
+
         $request = $this->getClient()->post(
             $this->eventKeywordsPath($eventId),
             null,
             [
-                'keywords' => (string)$keyword,
+                'keywords' => (string) implode(';', $keywordsCollection),
+                'visibles' => (string) implode(';', $visiblesCollection)
             ]
         );
 

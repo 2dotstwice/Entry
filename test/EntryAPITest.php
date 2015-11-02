@@ -30,6 +30,8 @@ use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\Guzzle\DefaultHttpClientFactory;
 use CultuurNet\Auth\Guzzle\HttpClientFactory;
 use CultuurNet\Auth\TokenCredentials;
+use CultuurNet\UDB3\KeywordsString;
+use CultuurNet\UDB3\Label;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use Guzzle\Http\Message\MessageInterface;
 use Guzzle\Http\Message\Response;
@@ -270,6 +272,67 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
             '0.1',
             Rsp::LEVEL_INFO,
             'ItemModified',
+            'http://test.rest.uitdatabank.be/api/v3/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
+            ''
+        );
+
+        $this->assertEquals(
+            $expectedRsp,
+            $rsp
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_apply_labels()
+    {
+        $response = (new Response(200))->setBody(
+            file_get_contents(__DIR__ . '/samples/KeywordsCreated.xml')
+        );
+        $this->mockPlugin->addResponse($response);
+
+        $xml = file_get_contents(__DIR__ . '/samples/valid_event.xml');
+
+        $eventId = '004aea08-e13d-48c9-b9eb-a18f20e6d44e';
+
+        $keywordsString = file_get_contents(__DIR__ . '/samples/keywordsstring_with_two_keywords.txt');
+        $keywords = [
+            new Keyword('keyword1', true),
+            new Keyword('keyword2', false)
+        ];
+
+        $rsp = $this->entryAPI->addKeywords($eventId, $keywords);
+
+        $requests = $this->mockPlugin->getReceivedRequests();
+
+        /** @var RequestInterface|MessageInterface|EntityEnclosingRequestInterface $request */
+        $request = reset($requests);
+
+        $this->assertEquals(
+            'POST',
+            $request->getMethod()
+        );
+
+        $this->assertEquals(
+            'http://example.com/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e/keywords',
+            $request->getUrl()
+        );
+
+        $this->assertEquals(
+            'application/x-www-form-urlencoded',
+            (string)$request->getHeader('Content-Type')
+        );
+
+        $this->assertEquals(
+            $keywordsString,
+            (string)$request->getPostFields()
+        );
+
+        $expectedRsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_INFO,
+            'KeywordsCreated',
             'http://test.rest.uitdatabank.be/api/v3/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
             ''
         );
