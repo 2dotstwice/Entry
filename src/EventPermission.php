@@ -24,10 +24,14 @@ class EventPermission
     public function __construct($cdbid, $editable)
     {
         if (!is_string($cdbid)) {
-            throw new \InvalidArgumentException('Expected value for argument $cdbid to be a string, got ' . gettype($cdbid));
+            throw new \InvalidArgumentException(
+                'Expected value for argument $cdbid to be a string, got ' . gettype($cdbid)
+            );
         }
         if (!is_bool($editable)) {
-            throw new \InvalidArgumentException('Expected value for argument $editable to be a string, got ' . gettype($editable));
+            throw new \InvalidArgumentException(
+                'Expected value for argument $editable to be a string, got ' . gettype($editable)
+            );
         }
 
         $this->cdbid = $cdbid;
