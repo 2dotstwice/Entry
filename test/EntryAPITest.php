@@ -30,13 +30,12 @@ use CultuurNet\Auth\ConsumerCredentials;
 use CultuurNet\Auth\Guzzle\DefaultHttpClientFactory;
 use CultuurNet\Auth\Guzzle\HttpClientFactory;
 use CultuurNet\Auth\TokenCredentials;
-use CultuurNet\UDB3\KeywordsString;
 use CultuurNet\UDB3\Label;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use Guzzle\Http\Message\MessageInterface;
+use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Mock\MockPlugin;
-use GuzzleHttp\Message\RequestInterface;
 
 class EntryAPITest extends \PHPUnit_Framework_TestCase
 {
