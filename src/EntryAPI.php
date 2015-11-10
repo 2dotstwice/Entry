@@ -133,7 +133,7 @@ class EntryAPI extends OAuthProtectedService
         );
     }
 
-    private function translate($eventId, Language $language, $fields)
+    public function translate($eventId, Language $language, $fields)
     {
         $request = $this->getClient()->post(
             $this->eventTranslationPath($eventId),
