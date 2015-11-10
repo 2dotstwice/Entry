@@ -169,7 +169,7 @@ class EntryAPI extends OAuthProtectedService
      *
      * @return Rsp
      */
-    public function addKeywords($eventId, $keywords)
+    public function addKeywords($eventId, array $keywords)
     {
         $keywordsCollection = array();
         $visiblesCollection = array();
