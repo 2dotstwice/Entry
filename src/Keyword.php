@@ -20,7 +20,10 @@ class Keyword extends String implements \JsonSerializable
         return $this->visible;
     }
 
-
+    /**
+     * @param string $value
+     * @param bool $visible
+     */
     public function __construct($value, $visible = true)
     {
         if (false !== strpos($value, ';')) {
