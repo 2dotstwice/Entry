@@ -171,7 +171,6 @@ class EntryAPI extends OAuthProtectedService
      */
     public function addKeywords($eventId, $keywords)
     {
-        $data = array();
         $keywordsCollection = array();
         $visiblesCollection = array();
 
