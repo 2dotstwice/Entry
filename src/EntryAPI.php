@@ -154,6 +154,17 @@ class EntryAPI extends OAuthProtectedService
 
     /**
      * @param string $eventId
+     * @param Keyword $keyword
+     *
+     * @return Rsp
+     */
+    public function addKeyword($eventId, Keyword $keyword)
+    {
+        return $this->addKeywords($eventId, [$keyword]);
+    }
+
+    /**
+     * @param string $eventId
      * @param Keyword[] $keywords
      *
      * @return Rsp
