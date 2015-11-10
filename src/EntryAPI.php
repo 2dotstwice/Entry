@@ -174,6 +174,7 @@ class EntryAPI extends OAuthProtectedService
         $keywordsCollection = array();
         $visiblesCollection = array();
 
+        /** @var Keyword $keyword */
         foreach ($keywords as $keyword) {
             $keywordsCollection[] = $keyword->__toString();
             $visiblesCollection[] = $keyword->isVisible() ? 'true' : 'false';
