@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<events>
+    <event>
+        <cdbid>123</cdbid>
+        <editable>true</editable>
+    </event>
+    <event>
+        <cdbid>456</cdbid>
+        <editable>false</editable>
+    </event>
+</events>

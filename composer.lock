@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9289c7bf5167e3e37ed1c1a5e42ceea8",
-    "content-hash": "d936d7d8d5a94a48cb61fd887b2f2676",
+    "hash": "10ea66f5f9e6644695d8992a38dbf051",
+    "content-hash": "990a76730f5d820a9ddc913c1bd2bc21",
     "packages": [
         {
             "name": "cultuurnet/auth",
@@ -2166,7 +2166,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.4.0"
+        "php": ">=5.5.0"
     },
     "platform-dev": []
 }
