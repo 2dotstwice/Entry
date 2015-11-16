@@ -342,6 +342,63 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function it_can_delete_a_translation()
+    {
+        $response = (new Response(200))->setBody(
+            file_get_contents(__DIR__ . '/samples/TranslationWithdrawn.xml')
+        );
+        $this->mockPlugin->addResponse($response);
+
+        $xml = file_get_contents(__DIR__ . '/samples/valid_event.xml');
+
+        $eventId = '004aea08-e13d-48c9-b9eb-a18f20e6d44e';
+
+        $language = new Language('en');
+
+        $rsp = $this->entryAPI->deleteTranslation($eventId, $language);
+
+        $requests = $this->mockPlugin->getReceivedRequests();
+
+        /** @var RequestInterface|MessageInterface|EntityEnclosingRequestInterface $request */
+        $request = reset($requests);
+
+        $this->assertEquals(
+            'DELETE',
+            $request->getMethod()
+        );
+
+        $this->assertEquals(
+            'http://example.com/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e/translations',
+            $request->getUrl()
+        );
+
+        $this->assertEquals(
+            'application/x-www-form-urlencoded',
+            (string)$request->getHeader('Content-Type')
+        );
+
+        $this->assertEquals(
+            'lang=' . $language->getCode(),
+            (string)$request->getPostFields()
+        );
+
+        $expectedRsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_INFO,
+            'TranslationWithdrawn',
+            'http://test.rest.uitdatabank.be/api/v3/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
+            ''
+        );
+
+        $this->assertEquals(
+            $expectedRsp,
+            $rsp
+        );
+    }
+
     public function createCulturefeedItemEvent($cdbid)
     {
         $event = new CultureFeed_Cdb_Item_Event();
