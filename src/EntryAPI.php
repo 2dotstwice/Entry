@@ -163,12 +163,10 @@ class EntryAPI extends OAuthProtectedService
     public function deleteTranslation($eventId, Language $language)
     {
         $request = $this->getClient()->delete(
-            $this->eventTranslationPath($eventId),
-            null,
-            [
-                'lang' => (string)$language,
-            ]
+            $this->eventTranslationPath($eventId)
         );
+
+        $request->getQuery()->set('lang', $language->getCode());
 
         $response = $request->send();
 
