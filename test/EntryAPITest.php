@@ -371,18 +371,8 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            'http://example.com/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e/translations',
+            'http://example.com/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e/translations?lang=en',
             $request->getUrl()
-        );
-
-        $this->assertEquals(
-            'application/x-www-form-urlencoded',
-            (string)$request->getHeader('Content-Type')
-        );
-
-        $this->assertEquals(
-            'lang=' . $language->getCode(),
-            (string)$request->getPostFields()
         );
 
         $expectedRsp = new Rsp(
