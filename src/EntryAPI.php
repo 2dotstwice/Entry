@@ -18,6 +18,8 @@ class EntryAPI extends OAuthProtectedService
 
     const TRANSLATION_CREATED = 'TranslationCreated';
 
+    const TRANSLATION_WITHDRAWN = 'TranslationWithdrawn';
+
     const KEYWORD_WITHDRAWN = 'KeywordWithdrawn';
 
     const KEYWORD_PRIVATE = 'PrivateKeyword';
@@ -142,6 +144,29 @@ class EntryAPI extends OAuthProtectedService
                 'lang' => (string)$language,
             ] + $fields
         );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardTranslationResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
+    /**
+     * @param $eventId
+     * @param Language $language
+     * @return static
+     * @throws UnexpectedTranslationErrorException
+     */
+    public function deleteTranslation($eventId, Language $language)
+    {
+        $request = $this->getClient()->delete(
+            $this->eventTranslationPath($eventId)
+        );
+
+        $request->getQuery()->set('lang', $language->getCode());
 
         $response = $request->send();
 
@@ -576,7 +601,8 @@ class EntryAPI extends OAuthProtectedService
     {
         $validCodes = [
             self::TRANSLATION_CREATED,
-            self::TRANSLATION_MODIFIED
+            self::TRANSLATION_MODIFIED,
+            self::TRANSLATION_WITHDRAWN,
         ];
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UnexpectedTranslationErrorException($rsp);
