@@ -18,7 +18,7 @@ class EntryAPI extends OAuthProtectedService
 
     const TRANSLATION_CREATED = 'TranslationCreated';
 
-    const TRANSLATION_DELETED = 'TranslationWithdrawn';
+    const TRANSLATION_WITHDRAWN = 'TranslationWithdrawn';
 
     const KEYWORD_WITHDRAWN = 'KeywordWithdrawn';
 
@@ -602,7 +602,7 @@ class EntryAPI extends OAuthProtectedService
         $validCodes = [
             self::TRANSLATION_CREATED,
             self::TRANSLATION_MODIFIED,
-            self::TRANSLATION_DELETED
+            self::TRANSLATION_WITHDRAWN,
         ];
         if (!in_array($rsp->getCode(), $validCodes)) {
             throw new UnexpectedTranslationErrorException($rsp);
