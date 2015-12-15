@@ -408,7 +408,8 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
             $eventId,
             $language,
             $subBrand,
-            $description);
+            $description
+        );
 
         $requests = $this->mockPlugin->getReceivedRequests();
 
