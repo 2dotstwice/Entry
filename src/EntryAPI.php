@@ -828,7 +828,8 @@ class EntryAPI extends OAuthProtectedService
      * @param string $eventId
      * @param string $lang
      * @param string $subBrand
-     * @param $description
+     * @param string $description
+     * @param string $plainText
      * @param string|null $title
      * @param string|null $copyright
      * @param string|null $link
@@ -839,6 +840,7 @@ class EntryAPI extends OAuthProtectedService
         $lang,
         $subBrand,
         $description,
+        $plainText,
         $title = null,
         $copyright = null,
         $link = null
@@ -847,6 +849,7 @@ class EntryAPI extends OAuthProtectedService
             $eventId,
             $lang,
             'collaboration',
+            $plainText,
             $link,
             $subBrand,
             $title,
@@ -861,6 +864,7 @@ class EntryAPI extends OAuthProtectedService
      * @param string $eventId
      * @param string $lang
      * @param string $type
+     * @param string $plainText
      * @param string|null $link
      * @param string|null $subBrand
      * @param string|null $title
@@ -873,6 +877,7 @@ class EntryAPI extends OAuthProtectedService
         $eventId,
         $lang,
         $type,
+        $plainText,
         $link = null,
         $subBrand = null,
         $title = null,
@@ -881,6 +886,7 @@ class EntryAPI extends OAuthProtectedService
     ) {
         $data = [
             'lang' => $lang,
+            'plaintext' => $plainText,
             'linktype' => $type,
             'link' => $link,
             'subbrand' => $subBrand,
