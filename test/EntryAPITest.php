@@ -403,12 +403,14 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         $language = new Language('en');
         $subBrand = "myBrand";
         $description = "description";
+        $plainText = "plaintext";
 
         $rsp = $this->entryAPI->createCollaborationLink(
             $eventId,
             $language,
             $subBrand,
-            $description
+            $description,
+            $plainText
         );
 
         $requests = $this->mockPlugin->getReceivedRequests();
@@ -432,7 +434,7 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            'lang=en&linktype=collaboration&subbrand=myBrand&description=description',
+            'lang=en&plaintext=plaintext&linktype=collaboration&subbrand=myBrand&description=description',
             (string)$request->getPostFields()
         );
 
