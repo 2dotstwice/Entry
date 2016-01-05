@@ -824,6 +824,94 @@ class EntryAPI extends OAuthProtectedService
         return $eventId;
     }
 
+    /**
+     * @param string $eventId
+     * @param string $lang
+     * @param string $subBrand
+     * @param string $description
+     * @param string $plainText
+     * @param string|null $title
+     * @param string|null $copyright
+     * @param string|null $link
+     * @return Rsp
+     */
+    public function createCollaborationLink(
+        $eventId,
+        $lang,
+        $subBrand,
+        $description,
+        $plainText,
+        $title = null,
+        $copyright = null,
+        $link = null
+    ) {
+        return $this->createLink(
+            $eventId,
+            $lang,
+            'collaboration',
+            $plainText,
+            $link,
+            $subBrand,
+            $title,
+            $description,
+            $copyright
+        );
+    }
+
+    /**
+     * Create UDB2 link.
+     *
+     * @param string $eventId
+     * @param string $lang
+     * @param string $type
+     * @param string $plainText
+     * @param string|null $link
+     * @param string|null $subBrand
+     * @param string|null $title
+     * @param string|null $description
+     * @param string|null $copyright
+     * @return Rsp
+     * @throws CreateEventErrorException
+     */
+    private function createLink(
+        $eventId,
+        $lang,
+        $type,
+        $plainText,
+        $link = null,
+        $subBrand = null,
+        $title = null,
+        $description = null,
+        $copyright = null
+    ) {
+        $data = [
+            'lang' => $lang,
+            'plaintext' => $plainText,
+            'linktype' => $type,
+            'link' => $link,
+            'subbrand' => $subBrand,
+            'title' => $title,
+            'description' => $description,
+            'copyright' => $copyright,
+        ];
+
+        $data = array_filter($data, 'strlen');
+
+        $request = $this->getClient()->post(
+            "event/{$eventId}/links",
+            null,
+            $data
+        );
+
+        $response = $request->send();
+
+        $rsp = Rsp::fromResponseBody($response->getBody(true));
+
+        $this->guardItemCreateResponseIsSuccessful($rsp);
+
+        return $rsp;
+    }
+
     private function guardItemCreateResponseIsSuccessful(Rsp $rsp)
     {
         if ($rsp->getLevel() == $rsp::LEVEL_ERROR) {

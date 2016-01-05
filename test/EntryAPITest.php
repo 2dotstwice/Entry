@@ -389,6 +389,69 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function it_can_create_a_collaboration_link()
+    {
+        $response = (new Response(200))->setBody(
+            file_get_contents(__DIR__ . '/samples/LinkCreated.xml')
+        );
+        $this->mockPlugin->addResponse($response);
+
+        $eventId = '004aea08-e13d-48c9-b9eb-a18f20e6d44e';
+        $language = new Language('en');
+        $subBrand = "myBrand";
+        $description = "description";
+        $plainText = "plaintext";
+
+        $rsp = $this->entryAPI->createCollaborationLink(
+            $eventId,
+            $language,
+            $subBrand,
+            $description,
+            $plainText
+        );
+
+        $requests = $this->mockPlugin->getReceivedRequests();
+
+        /** @var RequestInterface|MessageInterface|EntityEnclosingRequestInterface $request */
+        $request = reset($requests);
+
+        $this->assertEquals(
+            'POST',
+            $request->getMethod()
+        );
+
+        $this->assertEquals(
+            'http://example.com/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e/links',
+            $request->getUrl()
+        );
+
+        $this->assertEquals(
+            'application/x-www-form-urlencoded',
+            (string)$request->getHeader('Content-Type')
+        );
+
+        $this->assertEquals(
+            'lang=en&plaintext=plaintext&linktype=collaboration&subbrand=myBrand&description=description',
+            (string)$request->getPostFields()
+        );
+
+        $expectedRsp = new Rsp(
+            '0.1',
+            Rsp::LEVEL_INFO,
+            'LinkCreated',
+            'http://test.rest.uitdatabank.be/api/v3/event/004aea08-e13d-48c9-b9eb-a18f20e6d44e',
+            ''
+        );
+
+        $this->assertEquals(
+            $expectedRsp,
+            $rsp
+        );
+    }
+
     public function createCulturefeedItemEvent($cdbid)
     {
         $event = new CultureFeed_Cdb_Item_Event();
