@@ -6,7 +6,7 @@
 
 namespace CultuurNet\Entry;
 
-class String implements \JsonSerializable
+class StringLiteral implements \JsonSerializable
 {
     protected $value;
 

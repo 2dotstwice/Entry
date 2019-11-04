@@ -5,7 +5,7 @@
 
 namespace CultuurNet\Entry;
 
-class Keyword extends String implements \JsonSerializable
+class Keyword extends StringLiteral implements \JsonSerializable
 {
     /**
      * @var bool

@@ -84,7 +84,7 @@ class EntryAPITest extends \PHPUnit_Framework_TestCase
         $rsp = $this->entryAPI->updateDescription(
             'foo',
             new EntityType('event'),
-            new String('Félixeën is een leuk monument! Blablabla.'),
+            new StringLiteral('Félixeën is een leuk monument! Blablabla.'),
             new Language('nl')
         );
 

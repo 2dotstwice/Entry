@@ -7,7 +7,7 @@
 
 namespace CultuurNet\Entry;
 
-class Title extends String implements \JsonSerializable
+class Title extends StringLiteral implements \JsonSerializable
 {
 
 }
